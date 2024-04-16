@@ -32,9 +32,14 @@ namespace Authentication.WebApi
                 app.UseSwaggerUI();
             }
 
+            app.UseSimpleAuthentication();
+            app.UsePrincipalReporter();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
