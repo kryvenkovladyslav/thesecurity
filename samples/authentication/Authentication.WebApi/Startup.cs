@@ -18,6 +18,8 @@ namespace Authentication.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDataProtection();
+            //services.AddAuthorization();
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -32,13 +34,16 @@ namespace Authentication.WebApi
                 app.UseSwaggerUI();
             }
 
-            app.UseSimpleAuthentication();
+            app.UseSimpleCookieAuthentication();
+           // app.UseSimpleAuthentication();
+            app.UseClaimsProvider();
             app.UsePrincipalReporter();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseSimpleAuthorization();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => endpoints.MapControllers());
