@@ -8,7 +8,7 @@ namespace Authentication.WebApi
     public class SimpleCookieAuthenticationMiddleware : BaseMiddleware
     {
         private readonly IDataProtector dataProtector;
-        public SimpleCookieAuthenticationMiddleware(RequestDelegate next,IDataProtectionProvider dataProtectionProvider) : base(next)
+        public SimpleCookieAuthenticationMiddleware(RequestDelegate next, IDataProtectionProvider dataProtectionProvider) : base(next)
         {
             this.dataProtector = dataProtectionProvider.CreateProtector(AuthenticationDefaults.CustomCookieAuthentication);
         }

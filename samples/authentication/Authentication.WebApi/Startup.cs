@@ -19,7 +19,19 @@ namespace Authentication.WebApi
         {
             services.AddControllers();
             services.AddDataProtection();
-            //services.AddAuthorization();
+            //services.AddSimpleCookieSignInOutService(); this line of code is not needed anymore
+
+            services.AddSimpleSignInOutService();
+            services.AddAuthentication(options =>
+            {
+                options.AddScheme<SimpleCookieSignInAuthenticationHandler>
+                    (AuthenticationDefaults.CustomCookieAuthentication, AuthenticationDefaults.CustomCookieAuthentication);
+
+                options.DefaultScheme = AuthenticationDefaults.CustomCookieAuthentication;
+                options.DefaultAuthenticateScheme = AuthenticationDefaults.CustomCookieAuthentication;
+            });
+
+            services.AddAuthorization();
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -34,16 +46,17 @@ namespace Authentication.WebApi
                 app.UseSwaggerUI();
             }
 
-            app.UseSimpleCookieAuthentication();
-           // app.UseSimpleAuthentication();
-            app.UseClaimsProvider();
+            //app.UseSimpleCookieAuthentication(); this line of code is not needed anymore
+            //app.UseSimpleAuthentication(); this line of code is not needed anymore
+            //app.UseClaimsProvider(); this line of code is not needed anymore
+            app.UseAuthentication();
             app.UsePrincipalReporter();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseSimpleAuthorization();
+            //app.UseSimpleAuthorization(); this line of code is not needed anymore
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => endpoints.MapControllers());

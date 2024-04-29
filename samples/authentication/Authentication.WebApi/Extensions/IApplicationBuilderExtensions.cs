@@ -62,7 +62,7 @@ namespace Authentication.WebApi
         /// <returns>Configured <see cref="IApplicationBuilder"/></returns>
         public static IApplicationBuilder UseSimpleCookieAuthentication(this IApplicationBuilder app)
         {
-            app.UseMiddleware<SimpleAuthorizationMiddleware>();
+            app.UseMiddleware<SimpleCookieAuthenticationMiddleware>();
 
             return app;
         }

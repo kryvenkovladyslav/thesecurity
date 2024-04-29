@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace Authentication.WebApi.Controllers
 {
@@ -10,30 +8,28 @@ namespace Authentication.WebApi.Controllers
     [Route("[controller]/[action]")]
     public sealed class SimpleAuthenticationController : ControllerBase
     {
-        private readonly IDataProtector dataProtector;
+        private readonly ISimpleSignInOutService signInOutService;
 
-        public SimpleAuthenticationController(IDataProtectionProvider dataProtectorProvider)
+        public SimpleAuthenticationController(ISimpleSignInOutService signInOutService)
         {
-            this.dataProtector = dataProtectorProvider.CreateProtector(AuthenticationDefaults.CustomCookieAuthentication);
+            this.signInOutService = signInOutService;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult SimpleSignIn()
+        public async Task<ActionResult> SimpleSignIn()
         {
-            var encoded = this.dataProtector.Protect(AuthenticationDefaults.AuthenticationType);
-            this.HttpContext.Response.Cookies.Append(AuthenticationDefaults.CustomCookieAuthentication, encoded);
+            await this.signInOutService.SignInAsync(this.HttpContext);
 
-            return this.Ok();
+            return await Task.FromResult(this.Ok());
         }
 
         [HttpGet]
-        [Authorize]
-        public ActionResult SimpleSignOut()
+        public async Task<ActionResult> SimpleSignOut()
         {
-            this.HttpContext.Response.Cookies.Delete(AuthenticationDefaults.CustomCookieAuthentication);
+            await this.signInOutService.SignOutAsync(this.HttpContext);
 
-            return this.Ok();
+            return await Task.FromResult(this.Ok());
         }
     }
 }
