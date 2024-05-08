@@ -18,12 +18,12 @@ namespace Security.Abstract
         /// <summary>
         /// Represents a name of a user
         /// </summary>
-        public string UserName { get; init; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// Represents a normalized name of a user
         /// </summary>
-        public string NormalizedUserName { get; init; }
+        public string NormalizedUserName { get; set; }
 
         /// <summary>
         /// Compares two users by identifier
