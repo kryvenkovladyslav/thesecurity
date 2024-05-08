@@ -21,6 +21,26 @@ namespace Security.Abstract
         public string UserName { get; set; }
 
         /// <summary>
+        /// Represents a phone number of a user
+        /// </summary>
+        public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// Indicates if the phone number confirmed by a user
+        /// </summary>
+        public bool IsPhoneNumberConfirmed { get; set; }
+
+        /// <summary>
+        /// Represents an email of a user
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Indicates if the email number confirmed by a user
+        /// </summary>
+        public bool IsEmailConfirmed { get; set; }
+
+        /// <summary>
         /// Represents a normalized name of a user
         /// </summary>
         public string NormalizedUserName { get; set; }
