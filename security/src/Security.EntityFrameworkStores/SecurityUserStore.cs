@@ -2,18 +2,22 @@
 using Microsoft.EntityFrameworkCore;
 using Security.Abstract;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Security.EntityFrameworkStores
 {
     public class SecurityUserStore<TContext, TUser, TIdentifier> : SecurityBaseStore<TContext>, 
-        IUserStore<TUser>
+        IUserStore<TUser>,
+        IQueryableUserStore<TUser>
         where TContext : DbContext
         where TUser : SecurityUser<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
         protected IdentityErrorDescriber ErrorDescriber { get; private init; }
+
+        public IQueryable<TUser> Users => this.GetSet<TUser>().AsNoTracking();
 
         public SecurityUserStore(TContext context, IdentityErrorDescriber errorDescriber) : base(context) 
         {
