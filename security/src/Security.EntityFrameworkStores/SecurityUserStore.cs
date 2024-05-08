@@ -13,7 +13,12 @@ namespace Security.EntityFrameworkStores
         where TUser : SecurityUser<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        public SecurityUserStore(TContext context) : base(context) { }
+        protected IdentityErrorDescriber ErrorDescriber { get; private init; }
+
+        public SecurityUserStore(TContext context, IdentityErrorDescriber errorDescriber) : base(context) 
+        {
+            this.ErrorDescriber = errorDescriber ?? throw new ArgumentNullException(nameof(errorDescriber));
+        }
 
         #region CRUD Implementation
 
@@ -24,9 +29,9 @@ namespace Security.EntityFrameworkStores
             cancellationToken.ThrowIfCancellationRequested();
 
             this.GetSet<TUser>().Add(user);
-            await this.SaveChangesAsync(cancellationToken);
 
-            return IdentityResult.Success;
+            var identityResult = await this.TrySaveChangesAsync(cancellationToken);
+            return identityResult;
         }
 
         public async Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken = default)
@@ -36,9 +41,9 @@ namespace Security.EntityFrameworkStores
             cancellationToken.ThrowIfCancellationRequested();
 
             this.GetSet<TUser>().Remove(user);
-            await this.SaveChangesAsync(cancellationToken);
 
-            return IdentityResult.Success;
+            var identityResult = await this.TrySaveChangesAsync(cancellationToken);
+            return identityResult;
         }
 
         public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken = default)
@@ -48,9 +53,9 @@ namespace Security.EntityFrameworkStores
             cancellationToken.ThrowIfCancellationRequested();
 
             this.GetSet<TUser>().Update(user);
-            await this.SaveChangesAsync(cancellationToken);
 
-            return IdentityResult.Success;
+            var identityResult = await this.TrySaveChangesAsync(cancellationToken);
+            return identityResult;
         }
 
         #endregion
@@ -136,6 +141,20 @@ namespace Security.EntityFrameworkStores
             user.UserName = userName;
 
             return Task.CompletedTask;
+        }
+
+        private async Task<IdentityResult> TrySaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await this.SaveChangesAsync(cancellationToken);
+                return IdentityResult.Success;
+            }
+            catch (Exception)
+            {
+                
+                return IdentityResult.Failed(this.ErrorDescriber.StorageFailure());
+            }
         }
 
         #endregion        
