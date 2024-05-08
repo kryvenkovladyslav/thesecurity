@@ -36,6 +36,11 @@ namespace Security.Abstract
         public string Email { get; set; }
 
         /// <summary>
+        /// Represents a normalized email of a user
+        /// </summary>
+        public string NormalizedEmail { get; set; }
+
+        /// <summary>
         /// Indicates if the email number confirmed by a user
         /// </summary>
         public bool IsEmailConfirmed { get; set; }
