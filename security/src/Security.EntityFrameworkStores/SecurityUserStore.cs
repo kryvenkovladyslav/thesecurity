@@ -65,7 +65,6 @@ namespace Security.EntityFrameworkStores
         public Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken = default)
         {
             this.ThrowIfDisposed();
-            ArgumentNullException.ThrowIfNullOrEmpty(userId, nameof(userId));
             cancellationToken.ThrowIfCancellationRequested();
 
             var convertedIdentifier = this.ConvertIdentifierFromString<Guid>(userId);
@@ -78,7 +77,6 @@ namespace Security.EntityFrameworkStores
         public Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default)
         {
             this.ThrowIfDisposed();
-            ArgumentNullException.ThrowIfNullOrEmpty(normalizedUserName, nameof(normalizedUserName));
             cancellationToken.ThrowIfCancellationRequested();
 
             var requiredUser = this.GetSet<TUser>()
@@ -135,7 +133,7 @@ namespace Security.EntityFrameworkStores
         {
             this.ThrowIfDisposed();
             ArgumentNullException.ThrowIfNull(user, nameof(user));
-            ArgumentNullException.ThrowIfNullOrEmpty(userName, nameof(userName));
+            ArgumentException.ThrowIfNullOrEmpty(userName, nameof(userName));
             cancellationToken.ThrowIfCancellationRequested();
 
             user.UserName = userName;
