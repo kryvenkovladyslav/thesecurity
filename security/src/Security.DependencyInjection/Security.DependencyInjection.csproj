@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Security.Abstract\Security.Abstract.csproj" />
+    <ProjectReference Include="..\Security.DataAccess\Security.DataAccess.csproj" />
+    <ProjectReference Include="..\Security.EntityFrameworkStores\Security.EntityFrameworkStores.csproj" />
     <ProjectReference Include="..\Security\Security.csproj" />
   </ItemGroup>
 
