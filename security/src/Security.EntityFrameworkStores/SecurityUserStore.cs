@@ -2,19 +2,23 @@
 using Microsoft.EntityFrameworkCore;
 using Security.Abstract;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Security.EntityFrameworkStores
 {
-    public class SecurityUserStore<TContext, TUser, TIdentifier> : SecurityBaseStore<TContext>, 
+    public class SecurityUserStore<TContext, TUser, TClaim, TIdentifier> : SecurityBaseStore<TContext>, 
         IUserStore<TUser>,
+        IUserClaimStore<TUser>,
         IUserEmailStore<TUser>,
         IUserPhoneNumberStore<TUser>,
         IQueryableUserStore<TUser>
         where TContext : DbContext
         where TUser : SecurityUser<TIdentifier>
+        where TClaim : SecurityClaim<TIdentifier>, new()
         where TIdentifier : IEquatable<TIdentifier>
     {
         protected IdentityErrorDescriber ErrorDescriber { get; private init; }
@@ -272,6 +276,94 @@ namespace Security.EntityFrameworkStores
             user.IsPhoneNumberConfirmed = confirmed;
             return Task.CompletedTask;
         }
+
+        #endregion
+
+        #region IUserClaimStore Implementation
+
+        public async Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var claims = await this.GetSet<TClaim>()
+                .Where(claim => claim.UserID.Equals(user.ID))
+                .Select(claim => new Claim(claim.Type, claim.Value))
+                .ToListAsync(cancellationToken);
+
+            return claims;
+        }
+
+        public async Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var mappedClaims = claims.Select(claim => new TClaim
+            {
+                UserID = user.ID,
+                Type = claim.Type,
+                Value = claim.Value
+            });
+
+            await this.GetSet<TClaim>().AddRangeAsync(mappedClaims, cancellationToken);
+        }
+
+        public async Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            ArgumentNullException.ThrowIfNull(claim, nameof(claim));
+            ArgumentNullException.ThrowIfNull(newClaim, nameof(newClaim));
+
+            var matchedClaims = await this.GetSet<TClaim>()
+                .Where(userClaim => userClaim.UserID.Equals(user.ID) && userClaim.Value == claim.Value && userClaim.Type == claim.Type)
+                .ToListAsync(cancellationToken);
+
+            foreach (var matchedClaim in matchedClaims)
+            {
+                matchedClaim.Type = newClaim.Value;
+                matchedClaim.Value = newClaim.Type;
+            }
+        }
+
+        public Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var mappedClaims = claims.Select(claim => new TClaim
+            {
+                UserID = user.ID,
+                Type = claim.Type,
+                Value = claim.Value
+            });
+
+            this.GetSet<TClaim>().RemoveRange(mappedClaims);
+
+            return Task.CompletedTask;
+        }
+
+        public async Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(claim, nameof(claim));
+
+            var identifiers = await this.GetSet<TClaim>()
+                .Where(userClaim => userClaim.Value == claim.Value && userClaim.Type == claim.ValueType)
+                .Select(userClaim => userClaim.UserID)
+                .ToListAsync(cancellationToken);
+
+            var users = await this.GetSet<TUser>()
+                .Where(user => identifiers.Any(id => user.ID.Equals(id)))
+                .ToListAsync(cancellationToken);
+
+            return users;
+        }
+
 
         #endregion
     }
