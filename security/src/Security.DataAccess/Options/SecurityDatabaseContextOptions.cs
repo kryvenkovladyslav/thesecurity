@@ -2,6 +2,6 @@
 {
     public sealed class SecurityDatabaseContextOptions
     {
-        public string ConnectionString { get; init; }
+        public string ConnectionString { get; set; }
     }
 }

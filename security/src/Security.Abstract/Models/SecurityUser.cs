@@ -13,7 +13,7 @@ namespace Security.Abstract
         /// <summary>
         /// Represent the identifier of a user
         /// </summary>
-        public TIdentifier ID { get; init; }
+        public virtual TIdentifier ID { get; init; }
 
         /// <summary>
         /// Represents a name of a user

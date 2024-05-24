@@ -13,12 +13,12 @@ namespace Security.Abstract
         /// <summary>
         /// Represent the identifier of a user's claim
         /// </summary>
-        public TIdentifier ID { get; init; }
+        public virtual TIdentifier ID { get; init; }
     
         /// <summary>
         /// Represent the identifier of a user
         /// </summary>
-        public TIdentifier UserID { get; init; }
+        public virtual TIdentifier UserID { get; init; }
 
         /// <summary>
         /// Represent a type of the claim

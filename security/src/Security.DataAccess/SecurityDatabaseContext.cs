@@ -9,6 +9,7 @@ namespace Security.DataAccess
         where TClaim : SecurityClaim<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
+        public SecurityDatabaseContext() { }
         protected SecurityDatabaseContextOptions SecurityDatabaseOptions { get; private init; }
 
         public SecurityDatabaseContext(SecurityDatabaseContextOptions securityDatabaseOptions)
@@ -23,7 +24,7 @@ namespace Security.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new SecurityUserConfiguration<TUser, TIdentifier>());
-            modelBuilder.ApplyConfiguration(new SecurityClaimConfiguration<TClaim, TIdentifier>());
+            modelBuilder.ApplyConfiguration(new SecurityClaimConfiguration<TUser, TClaim, TIdentifier>());
         }
     }
 }

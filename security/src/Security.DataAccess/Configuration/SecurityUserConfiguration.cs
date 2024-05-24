@@ -11,16 +11,51 @@ namespace Security.DataAccess
     {
         public void Configure(EntityTypeBuilder<TUser> builder)
         {
-            builder.HasKey(user => user.ID);
+            var userTable = builder.ToTable(SecurityUserConfigurationDefaults.SecurityUserTableName);
 
-            builder.Property(user => user.ID).IsRequired();
-            builder.Property(user => user.UserName).IsRequired();
-            builder.Property(user => user.Email).IsRequired();
-            builder.Property(user => user.PhoneNumber);
-            builder.Property(user => user.IsEmailConfirmed).IsRequired();
-            builder.Property(user => user.IsPhoneNumberConfirmed).IsRequired();
-            builder.Property(user => user.NormalizedEmail).IsRequired();
-            builder.Property(user => user.NormalizedUserName).IsRequired();
+            userTable.HasKey(user => user.ID);
+            
+            userTable
+                .Property(user => user.ID)
+                .HasColumnName(SecurityUserConfigurationDefaults.IdentifierColumnName)
+                .IsRequired();
+
+            userTable
+                .Property(user => user.UserName)
+                .HasColumnName(SecurityUserConfigurationDefaults.UserNameColumnName)
+                .IsRequired();
+
+            userTable
+                .Property(user => user.Email)
+                .HasColumnName(SecurityUserConfigurationDefaults.EmailColumnName)
+                .IsRequired();
+
+            userTable
+                .Property(user => user.PhoneNumber)
+                .HasColumnName(SecurityUserConfigurationDefaults.PhoneNumberColumnName)
+                .HasDefaultValue(null)
+                .IsRequired();
+
+            userTable.Property(user => user.IsEmailConfirmed)
+                .HasColumnName(SecurityUserConfigurationDefaults.EmailConfirmedColumnName)
+                .HasDefaultValue(false)
+                .IsRequired();
+
+            userTable
+                .Property(user => user.IsPhoneNumberConfirmed)
+                .HasColumnName(SecurityUserConfigurationDefaults.PhoneNumberConfirmedColumnName)
+                .HasDefaultValue(false)
+                .IsRequired();
+
+            userTable
+                .Property(user => user.NormalizedEmail)
+                .HasColumnName(SecurityUserConfigurationDefaults.NormalizedEmailColumnName)
+                .IsRequired();
+
+            userTable
+                .Property(user => user.NormalizedUserName)
+                .HasColumnName(SecurityUserConfigurationDefaults.NormalizedUserNameColumnName)
+                .IsRequired();
         }
     }
 }
