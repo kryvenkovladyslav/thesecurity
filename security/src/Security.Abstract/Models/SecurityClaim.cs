@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Text;
 
 namespace Security.Abstract
@@ -30,6 +31,16 @@ namespace Security.Abstract
         /// </summary>
         public string Value { get; set; }
 
+        /// <summary>
+        /// Initializes Type and Value properties of the class
+        /// </summary>
+        /// <param name="claim"></param>
+        public virtual void InitializeFromClaim(Claim claim) 
+        {
+            this.Type = claim.Type;
+            this.Value = claim.Value;
+        }
+        
         /// <summary>
         /// Compares two claims by identifier
         /// </summary>

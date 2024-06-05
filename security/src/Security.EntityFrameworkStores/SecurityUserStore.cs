@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace Security.EntityFrameworkStores
 {
-    public class SecurityUserStore<TContext, TUser, TClaim, TIdentifier> : SecurityBaseStore<TContext>, 
+    public class SecurityUserStore<TContext, TUser, TClaim, TIdentifier> : SecurityBaseStore<TContext, TIdentifier, TUser, TClaim>, 
         IUserStore<TUser>,
         IUserClaimStore<TUser>,
         IUserEmailStore<TUser>,
         IUserPhoneNumberStore<TUser>,
         IQueryableUserStore<TUser>
         where TContext : DbContext
-        where TUser : SecurityUser<TIdentifier>
-        where TClaim : SecurityClaim<TIdentifier>, new()
         where TIdentifier : IEquatable<TIdentifier>
+        where TUser : SecurityUser<TIdentifier>, new()
+        where TClaim : SecurityClaim<TIdentifier>, new()
     {
         protected IdentityErrorDescriber ErrorDescriber { get; private init; }
 
@@ -295,24 +295,24 @@ namespace Security.EntityFrameworkStores
             return claims;
         }
 
-        public async Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
+        public Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
         {
             this.ThrowIfDisposed();
             ArgumentNullException.ThrowIfNull(user, nameof(user));
+            ArgumentNullException.ThrowIfNull(claims, nameof(claims));
             cancellationToken.ThrowIfCancellationRequested();
 
-            var mappedClaims = claims.Select(claim => new TClaim
+            foreach (var claim in claims)
             {
-                UserID = user.ID,
-                Type = claim.Type,
-                Value = claim.Value
-            });
+                this.GetSet<TClaim>().Add(this.CreateUserClaim(user, claim));
+            }
 
-            await this.GetSet<TClaim>().AddRangeAsync(mappedClaims, cancellationToken);
+            return Task.CompletedTask;
         }
 
         public async Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken = default)
         {
+            this.ThrowIfDisposed();
             cancellationToken.ThrowIfCancellationRequested();
             ArgumentNullException.ThrowIfNull(user, nameof(user));
             ArgumentNullException.ThrowIfNull(claim, nameof(claim));
@@ -329,26 +329,26 @@ namespace Security.EntityFrameworkStores
             }
         }
 
-        public Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
+        public async Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
         {
             this.ThrowIfDisposed();
+            ArgumentNullException.ThrowIfNull(claims);
             ArgumentNullException.ThrowIfNull(user, nameof(user));
             cancellationToken.ThrowIfCancellationRequested();
 
-            var mappedClaims = claims.Select(claim => new TClaim
+            foreach (var mappedClaim in claims)
             {
-                UserID = user.ID,
-                Type = claim.Type,
-                Value = claim.Value
-            });
+                var requiredClaims = await this.GetSet<TClaim>()
+                    .Where(claim => claim.UserID.Equals(user.ID) && claim.Value == mappedClaim.Value && claim.Type == mappedClaim.Type)
+                    .ToListAsync(cancellationToken);
 
-            this.GetSet<TClaim>().RemoveRange(mappedClaims);
-
-            return Task.CompletedTask;
+                requiredClaims.ForEach(claim => this.GetSet<TClaim>().Remove(claim));
+            }
         }
 
         public async Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken = default)
         {
+            this.ThrowIfDisposed();
             cancellationToken.ThrowIfCancellationRequested();
             ArgumentNullException.ThrowIfNull(claim, nameof(claim));
 
@@ -363,7 +363,6 @@ namespace Security.EntityFrameworkStores
 
             return users;
         }
-
 
         #endregion
     }

@@ -1,13 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Security.Abstract;
 using System;
 using System.ComponentModel;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Security.EntityFrameworkStores
 {
-    public class SecurityBaseStore<TContext>
+    public class SecurityBaseStore<TContext, TIdentifier, TUser, TClaim>
         where TContext : DbContext
+        where TIdentifier : IEquatable<TIdentifier>
+        where TUser : SecurityUser<TIdentifier>, new()
+        where TClaim : SecurityClaim<TIdentifier>, new()
     {
         private bool disposed;
 
@@ -47,6 +52,13 @@ namespace Security.EntityFrameworkStores
             }
 
             return (TKey)TypeDescriptor.GetConverter(typeof(TKey)).ConvertFromInvariantString(id);
+        }
+
+        protected virtual TClaim CreateUserClaim(TUser user, Claim claim)
+        {
+            var securityClaim = new TClaim { UserID = user.ID };
+            securityClaim.InitializeFromClaim(claim);
+            return securityClaim;
         }
 
         protected virtual string ConvertIdentifierToString<TKey>(TKey id)

@@ -22,7 +22,7 @@ namespace Security.DependencyInjection
         }
 
         public static IServiceCollection AddEntityFrameworkSecurityStores<TContext, TUser, TClaim, TIdentifier>(this IServiceCollection services)
-            where TUser : SecurityUser<TIdentifier>
+            where TUser : SecurityUser<TIdentifier>, new()
             where TClaim : SecurityClaim<TIdentifier>, new()
             where TIdentifier : IEquatable<TIdentifier>
             where TContext : SecurityDatabaseContext<TUser, TIdentifier, TClaim>
