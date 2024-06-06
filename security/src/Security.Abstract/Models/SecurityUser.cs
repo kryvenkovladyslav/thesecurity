@@ -7,14 +7,9 @@ namespace Security.Abstract
     /// This class represents a user in the Security System
     /// </summary>
     /// <typeparam name="TIdentifier">Represents the identifier of a user</typeparam>
-    public abstract class SecurityUser<TIdentifier> : IEquatable<SecurityUser<TIdentifier>>
+    public abstract class SecurityUser<TIdentifier> : SecurityEntity<TIdentifier>, IEquatable<SecurityUser<TIdentifier>>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        /// <summary>
-        /// Represent the identifier of a user
-        /// </summary>
-        public virtual TIdentifier ID { get; init; }
-
         /// <summary>
         /// Represents a name of a user
         /// </summary>

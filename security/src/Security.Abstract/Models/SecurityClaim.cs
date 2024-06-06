@@ -8,14 +8,9 @@ namespace Security.Abstract
     /// This class represents a claim in the Security System
     /// </summary>
     /// <typeparam name="TIdentifier">Represents the identifier of a claim</typeparam>
-    public class SecurityClaim<TIdentifier> : IEquatable<SecurityClaim<TIdentifier>>
+    public class SecurityClaim<TIdentifier> : SecurityEntity<TIdentifier>, IEquatable<SecurityClaim<TIdentifier>>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        /// <summary>
-        /// Represent the identifier of a user's claim
-        /// </summary>
-        public virtual TIdentifier ID { get; init; }
-    
         /// <summary>
         /// Represent the identifier of a user
         /// </summary>
