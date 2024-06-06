@@ -15,7 +15,7 @@ namespace Security.DependencyInjection
             where TIdentifier : IEquatable<TIdentifier> 
         {
 
-            services.TryAddScoped<IUserValidator<TUser>, SecurityUserEmailValidator<TUser, TIdentifier>>();
+            //services.TryAddScoped<IUserValidator<TUser>, SecurityUserEmailValidator<TUser, TIdentifier>>();
             services.AddIdentityCore<TUser>();
 
             return services;
@@ -25,7 +25,7 @@ namespace Security.DependencyInjection
             where TUser : SecurityUser<TIdentifier>, new()
             where TClaim : SecurityClaim<TIdentifier>, new()
             where TIdentifier : IEquatable<TIdentifier>
-            where TContext : SecurityDatabaseContext<TUser, TIdentifier, TClaim>
+            where TContext : SecurityDatabaseContext<TUser, TClaim, TIdentifier>
         {
             services.TryAddScoped<IUserStore<TUser>, SecurityUserStore<TContext, TUser, TClaim, TIdentifier>>();
 

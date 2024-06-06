@@ -4,12 +4,13 @@ using System;
 
 namespace Security.DataAccess
 {
-    public abstract class SecurityDatabaseContext<TUser, TIdentifier, TClaim> : DbContext
+    public abstract class SecurityDatabaseContext<TUser, TClaim, TIdentifier> : DbContext
         where TUser : SecurityUser<TIdentifier>
         where TClaim : SecurityClaim<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
         public SecurityDatabaseContext() { }
+
         protected SecurityDatabaseContextOptions SecurityDatabaseOptions { get; private init; }
 
         public SecurityDatabaseContext(SecurityDatabaseContextOptions securityDatabaseOptions)

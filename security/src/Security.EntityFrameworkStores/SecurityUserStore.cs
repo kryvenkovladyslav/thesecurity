@@ -25,6 +25,8 @@ namespace Security.EntityFrameworkStores
 
         public IQueryable<TUser> Users => this.GetSet<TUser>().AsNoTracking();
 
+        public IQueryable<TClaim> Claims => this.GetSet<TClaim>().AsNoTracking();
+
         public SecurityUserStore(TContext context, IdentityErrorDescriber errorDescriber) : base(context) 
         {
             this.ErrorDescriber = errorDescriber ?? throw new ArgumentNullException(nameof(errorDescriber));
@@ -78,7 +80,7 @@ namespace Security.EntityFrameworkStores
             cancellationToken.ThrowIfCancellationRequested();
 
             var convertedIdentifier = this.ConvertIdentifierFromString<Guid>(userId);
-            var requiredUser = this.GetSet<TUser>()
+            var requiredUser = this.Users
                 .FirstOrDefaultAsync(user => user.ID.Equals(convertedIdentifier), cancellationToken);
 
             return requiredUser;
@@ -89,7 +91,7 @@ namespace Security.EntityFrameworkStores
             this.ThrowIfDisposed();
             cancellationToken.ThrowIfCancellationRequested();
 
-            var requiredUser = this.GetSet<TUser>()
+            var requiredUser = this.Users
                 .FirstOrDefaultAsync(user => user.NormalizedUserName == normalizedUserName, cancellationToken);
 
             return requiredUser;
@@ -105,7 +107,7 @@ namespace Security.EntityFrameworkStores
             ArgumentNullException.ThrowIfNull(user, nameof(user));
             cancellationToken.ThrowIfCancellationRequested();
 
-            return Task.FromResult(user.UserName);
+            return Task.FromResult(user.NormalizedUserName);
         }
 
         public Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken = default)
@@ -231,7 +233,7 @@ namespace Security.EntityFrameworkStores
             ArgumentNullException.ThrowIfNull(user, nameof(user));
             cancellationToken.ThrowIfCancellationRequested();
 
-            user.Email = normalizedEmail;
+            user.NormalizedEmail = normalizedEmail;
             return Task.CompletedTask;
         }
 
@@ -287,7 +289,7 @@ namespace Security.EntityFrameworkStores
             ArgumentNullException.ThrowIfNull(user, nameof(user));
             cancellationToken.ThrowIfCancellationRequested();
 
-            var claims = await this.GetSet<TClaim>()
+            var claims = await this.Claims
                 .Where(claim => claim.UserID.Equals(user.ID))
                 .Select(claim => new Claim(claim.Type, claim.Value))
                 .ToListAsync(cancellationToken);
@@ -318,7 +320,7 @@ namespace Security.EntityFrameworkStores
             ArgumentNullException.ThrowIfNull(claim, nameof(claim));
             ArgumentNullException.ThrowIfNull(newClaim, nameof(newClaim));
 
-            var matchedClaims = await this.GetSet<TClaim>()
+            var matchedClaims = await this.Claims
                 .Where(userClaim => userClaim.UserID.Equals(user.ID) && userClaim.Value == claim.Value && userClaim.Type == claim.Type)
                 .ToListAsync(cancellationToken);
 
@@ -338,7 +340,7 @@ namespace Security.EntityFrameworkStores
 
             foreach (var mappedClaim in claims)
             {
-                var requiredClaims = await this.GetSet<TClaim>()
+                var requiredClaims = await this.Claims
                     .Where(claim => claim.UserID.Equals(user.ID) && claim.Value == mappedClaim.Value && claim.Type == mappedClaim.Type)
                     .ToListAsync(cancellationToken);
 
@@ -352,12 +354,12 @@ namespace Security.EntityFrameworkStores
             cancellationToken.ThrowIfCancellationRequested();
             ArgumentNullException.ThrowIfNull(claim, nameof(claim));
 
-            var identifiers = await this.GetSet<TClaim>()
+            var identifiers = await this.Claims
                 .Where(userClaim => userClaim.Value == claim.Value && userClaim.Type == claim.ValueType)
                 .Select(userClaim => userClaim.UserID)
                 .ToListAsync(cancellationToken);
 
-            var users = await this.GetSet<TUser>()
+            var users = await this.Users
                 .Where(user => identifiers.Any(id => user.ID.Equals(id)))
                 .ToListAsync(cancellationToken);
 
