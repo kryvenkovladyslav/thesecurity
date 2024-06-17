@@ -15,9 +15,22 @@ namespace Security.DependencyInjection
             where TIdentifier : IEquatable<TIdentifier> 
         {
 
+            services
+                .AddConfirmationService<IEmailConfirmationService, IEmailConfirmationMessage, SecurityEmailConfirmationService>()
+                .AddConfirmationService<IPhoneNumberConfirmationService, IPhoneNumberConfirmationMessage, SecurityPhoneNumberConfirmationService>();
+
             //services.TryAddScoped<IUserValidator<TUser>, SecurityUserEmailValidator<TUser, TIdentifier>>();
             services.AddIdentityCore<TUser>();
 
+            return services;
+        }
+
+        public static IServiceCollection AddConfirmationService<TInterface, TConfirmationMessage, TImplementation>(this IServiceCollection services)
+            where TImplementation : class, TInterface
+            where TConfirmationMessage : IConfirmationMessage
+            where TInterface : class, IContactConfirmationService<TConfirmationMessage>
+        {
+            services.TryAddScoped<TInterface, TImplementation>();
             return services;
         }
 
