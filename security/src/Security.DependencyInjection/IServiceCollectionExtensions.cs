@@ -21,11 +21,15 @@ namespace Security.DependencyInjection
             return services;
         }
 
-        public static IServiceCollection AddEntityFrameworkSecurityStores<TContext, TUser, TClaim, TIdentifier>(this IServiceCollection services)
+        public static IServiceCollection AddEntityFrameworkSecurityStores
+                <TContext, TUser, TRole, TClaim, TUserRole, TRoleClaim, TIdentifier>(this IServiceCollection services)
             where TUser : SecurityUser<TIdentifier>, new()
+            where TRole : SecurityRole<TIdentifier>, new()
             where TClaim : SecurityClaim<TIdentifier>, new()
+            where TUserRole : SecurityUserRole<TIdentifier>, new()
+            where TRoleClaim : SecurityRoleClaim<TIdentifier>, new()
             where TIdentifier : IEquatable<TIdentifier>
-            where TContext : SecurityDatabaseContext<TUser, TClaim, TIdentifier>
+            where TContext : SecurityDatabaseContext<TUser, TRole, TClaim, TUserRole, TRoleClaim, TIdentifier>
         {
             services.TryAddScoped<IUserStore<TUser>, SecurityUserStore<TContext, TUser, TClaim, TIdentifier>>();
 
