@@ -56,6 +56,12 @@ namespace Security.DataAccess
                 .Property(user => user.NormalizedUserName)
                 .HasColumnName(SecurityUserConfigurationDefaults.NormalizedUserNameColumnName)
                 .IsRequired();
+
+            userTable
+              .Property(user => user.SecurityStamp)
+              .HasColumnName(SecurityUserConfigurationDefaults.SecurityStampColumnName)
+              .HasDefaultValue(null)
+              .IsRequired(false);
         }
     }
 }

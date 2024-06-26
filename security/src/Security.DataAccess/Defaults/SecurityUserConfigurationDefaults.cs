@@ -19,5 +19,8 @@
         public static string EmailConfirmedColumnName { get; } = "EmailConfirmed";
 
         public static string NormalizedUserNameColumnName { get; } = "NormalizedUserName";
+
+        public static string SecurityStampColumnName { get; } = "SecurityStamp";
+
     }
 }
