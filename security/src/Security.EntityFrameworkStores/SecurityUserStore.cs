@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Security.Abstract;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -14,8 +15,9 @@ namespace Security.EntityFrameworkStores
         IUserStore<TUser>,
         IUserClaimStore<TUser>,
         IUserEmailStore<TUser>,
+        IQueryableUserStore<TUser>,
         IUserPhoneNumberStore<TUser>,
-        IQueryableUserStore<TUser>
+        IUserSecurityStampStore<TUser>
         where TContext : DbContext
         where TIdentifier : IEquatable<TIdentifier>
         where TUser : SecurityUser<TIdentifier>, new()
@@ -364,6 +366,29 @@ namespace Security.EntityFrameworkStores
                 .ToListAsync(cancellationToken);
 
             return users;
+        }
+
+        #endregion
+
+        #region IUserSecurityStampStore Implementation
+
+        public virtual Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            user.SecurityStamp = stamp;
+            return Task.CompletedTask;
+        }
+
+        public virtual Task<string> GetSecurityStampAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            return Task.FromResult(user.SecurityStamp);
         }
 
         #endregion
