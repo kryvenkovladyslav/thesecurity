@@ -46,6 +46,11 @@ namespace Security.Abstract
         public string NormalizedUserName { get; set; }
 
         /// <summary>
+        /// Represents a security token for the user
+        /// </summary>
+        public string SecurityStamp { get; set; }
+
+        /// <summary>
         /// Compares two users by identifier
         /// </summary>
         /// <param name="obj">The object will be compared</param>
