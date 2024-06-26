@@ -58,10 +58,10 @@ namespace Security.DataAccess
                 .IsRequired();
 
             userTable
-              .Property(user => user.SecurityStamp)
-              .HasColumnName(SecurityUserConfigurationDefaults.SecurityStampColumnName)
-              .HasDefaultValue(null)
-              .IsRequired(false);
+                .Property(user => user.SecurityStamp)
+                .HasColumnName(SecurityUserConfigurationDefaults.SecurityStampColumnName)
+                .HasDefaultValue(null)
+                .IsRequired(false);
         }
     }
 }
