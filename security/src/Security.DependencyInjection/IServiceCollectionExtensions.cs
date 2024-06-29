@@ -5,6 +5,7 @@ using Security.EntityFrameworkStores;
 using Security.Abstract;
 using Security.DataAccess;
 using System;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Security.DependencyInjection
 {
@@ -14,6 +15,8 @@ namespace Security.DependencyInjection
             where TUser : SecurityUser<TIdentifier>
             where TIdentifier : IEquatable<TIdentifier> 
         {
+            services.AddScoped<IUserClaimsPrincipalFactory<TUser>, SecurityUserClaimsPrincipalFactory<TUser, TIdentifier>>();
+
             services
                 .AddConfirmationService<IEmailConfirmationService, IEmailConfirmationMessage, SecurityEmailConfirmationService>()
                 .AddConfirmationService<IPhoneNumberConfirmationService, IPhoneNumberConfirmationMessage, SecurityPhoneNumberConfirmationService>();
@@ -25,9 +28,21 @@ namespace Security.DependencyInjection
                 options.Tokens.ChangeEmailTokenProvider = SecurityTokenOptions.DefaultSecurityEmailTokenProvider;
             })
                 .AddTokenProvider<SecurityEmailConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityEmailTokenProvider)
-                .AddTokenProvider<SecurityPhoneNumberConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityPhoneNumberTokenProvider);
+                .AddTokenProvider<SecurityPhoneNumberConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityPhoneNumberTokenProvider)
+                .AddSignInManager<TUser>();
 
             return services;
+        }
+
+        public static AuthenticationBuilder AddSecurityAuthentication(this IServiceCollection services)
+        {
+            return services.AddAuthentication(SecurityConstants.AuthenticationType);
+        }
+
+        public static AuthenticationBuilder AddSecurityCookieAuthentication(this IServiceCollection services)
+        {
+            return services.AddSecurityAuthentication()
+                .AddCookie(SecurityConstants.AuthenticationType);
         }
 
         public static IServiceCollection AddConfirmationService<TInterface, TConfirmationMessage, TImplementation>(this IServiceCollection services)
