@@ -14,13 +14,18 @@ namespace Security.DependencyInjection
             where TUser : SecurityUser<TIdentifier>
             where TIdentifier : IEquatable<TIdentifier> 
         {
-
             services
                 .AddConfirmationService<IEmailConfirmationService, IEmailConfirmationMessage, SecurityEmailConfirmationService>()
                 .AddConfirmationService<IPhoneNumberConfirmationService, IPhoneNumberConfirmationMessage, SecurityPhoneNumberConfirmationService>();
 
-            //services.TryAddScoped<IUserValidator<TUser>, SecurityUserEmailValidator<TUser, TIdentifier>>();
-            services.AddIdentityCore<TUser>();
+            services.AddIdentityCore<TUser>(options =>
+            {
+                options.Tokens.ChangePhoneNumberTokenProvider = SecurityTokenOptions.DefaultSecurityPhoneNumberTokenProvider;
+                options.Tokens.EmailConfirmationTokenProvider = SecurityTokenOptions.DefaultSecurityEmailTokenProvider;
+                options.Tokens.ChangeEmailTokenProvider = SecurityTokenOptions.DefaultSecurityEmailTokenProvider;
+            })
+                .AddTokenProvider<SecurityEmailConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityEmailTokenProvider)
+                .AddTokenProvider<SecurityPhoneNumberConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityPhoneNumberTokenProvider);
 
             return services;
         }
