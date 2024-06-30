@@ -16,6 +16,7 @@ namespace Security.DependencyInjection
             where TIdentifier : IEquatable<TIdentifier> 
         {
             services.AddScoped<IUserClaimsPrincipalFactory<TUser>, SecurityUserClaimsPrincipalFactory<TUser, TIdentifier>>();
+            services.AddScoped<IPasswordHasher<TUser>, SecurityPasswordHasher<TUser, TIdentifier>>();
 
             services
                 .AddConfirmationService<IEmailConfirmationService, IEmailConfirmationMessage, SecurityEmailConfirmationService>()
