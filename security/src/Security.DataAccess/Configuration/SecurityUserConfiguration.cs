@@ -62,6 +62,11 @@ namespace Security.DataAccess
                 .HasColumnName(SecurityUserConfigurationDefaults.SecurityStampColumnName)
                 .HasDefaultValue(null)
                 .IsRequired(false);
+
+            userTable
+                .Property(user => user.PasswordHash)
+                .HasColumnName(SecurityUserConfigurationDefaults.PasswordHashColumnName)
+                .IsRequired();
         }
     }
 }

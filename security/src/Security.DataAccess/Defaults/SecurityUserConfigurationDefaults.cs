@@ -22,5 +22,6 @@
 
         public static string SecurityStampColumnName { get; } = "SecurityStamp";
 
+        public static string PasswordHashColumnName { get; set; } = "PasswordHash";
     }
 }
