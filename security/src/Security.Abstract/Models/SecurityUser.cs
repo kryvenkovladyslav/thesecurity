@@ -51,6 +51,11 @@ namespace Security.Abstract
         public string SecurityStamp { get; set; }
 
         /// <summary>
+        /// Represents a hashed password of the user
+        /// </summary>
+        public string PasswordHash { get; set; }
+
+        /// <summary>
         /// Compares two users by identifier
         /// </summary>
         /// <param name="obj">The object will be compared</param>
