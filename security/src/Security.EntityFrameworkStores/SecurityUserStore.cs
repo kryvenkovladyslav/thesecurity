@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Security.Abstract;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -15,6 +14,7 @@ namespace Security.EntityFrameworkStores
         IUserStore<TUser>,
         IUserClaimStore<TUser>,
         IUserEmailStore<TUser>,
+        IUserPasswordStore<TUser>,
         IQueryableUserStore<TUser>,
         IUserPhoneNumberStore<TUser>,
         IUserSecurityStampStore<TUser>
@@ -389,6 +389,41 @@ namespace Security.EntityFrameworkStores
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
             return Task.FromResult(user.SecurityStamp);
+        }
+
+        #endregion
+
+        #region IUserPasswordStore Implementation
+
+        public virtual Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            ArgumentNullException.ThrowIfNullOrEmpty(passwordHash, nameof(passwordHash));
+
+            user.PasswordHash = passwordHash;
+            return Task.CompletedTask;
+        }
+
+       
+        public virtual Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            return Task.FromResult(user.PasswordHash);
+        }
+
+       
+        public virtual Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
         }
 
         #endregion
