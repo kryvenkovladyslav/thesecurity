@@ -27,22 +27,32 @@ namespace Security.DependencyInjection
                 options.Tokens.ChangePhoneNumberTokenProvider = SecurityTokenOptions.DefaultSecurityPhoneNumberTokenProvider;
                 options.Tokens.EmailConfirmationTokenProvider = SecurityTokenOptions.DefaultSecurityEmailTokenProvider;
                 options.Tokens.ChangeEmailTokenProvider = SecurityTokenOptions.DefaultSecurityEmailTokenProvider;
+                options.Tokens.PasswordResetTokenProvider = SecurityTokenOptions.DefaultSecurityEmailTokenProvider;
+
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredLength = 10;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredUniqueChars = 0;
             })
                 .AddTokenProvider<SecurityEmailConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityEmailTokenProvider)
                 .AddTokenProvider<SecurityPhoneNumberConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityPhoneNumberTokenProvider)
-                .AddSignInManager<TUser>();
+                .AddSignInManager<SignInManager<TUser>>();
+
+            services.AddScoped<IPasswordValidator<TUser>, SecurityUserPasswordValidator<TUser, TIdentifier>>();
 
             return services;
         }
 
-        public static AuthenticationBuilder AddSecurityAuthentication(this IServiceCollection services)
+        public static AuthenticationBuilder AddSecurityAuthentication(this IServiceCollection services, string authenticationDefaultScheme = null)
         {
-            return services.AddAuthentication(SecurityConstants.AuthenticationType);
+            return services.AddAuthentication(authenticationDefaultScheme ?? SecurityConstants.AuthenticationType);
         }
 
         public static AuthenticationBuilder AddSecurityCookieAuthentication(this IServiceCollection services)
         {
-            return services.AddSecurityAuthentication()
+            return services.AddSecurityAuthentication(SecurityConstants.AuthenticationType)
                 .AddCookie(SecurityConstants.AuthenticationType);
         }
 

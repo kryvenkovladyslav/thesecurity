@@ -19,7 +19,7 @@ namespace Security
         }
 
         protected virtual async Task<ClaimsIdentity> GenerateUserClaimsIdentityAsync(TUser user)
-        {
+        { 
             var claimsIdentity = new ClaimsIdentity(SecurityConstants.AuthenticationType);
 
             var convertedIdentifier = TypeDescriptor.GetConverter(typeof(string)).ConvertToInvariantString(user.ID);

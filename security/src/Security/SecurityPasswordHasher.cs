@@ -13,7 +13,7 @@ namespace Security
     {
         public virtual string HashPassword(TUser user, string password)
         {
-            var convertedIdentifier = TypeDescriptor.GetConverter(typeof(string)).ConvertToInvariantString(user.ID);
+            var convertedIdentifier = TypeDescriptor.GetConverter(typeof(string)).ConvertToInvariantString(user.UserName);
 
             var hashAlgorithm = new HMACSHA256(Encoding.UTF8.GetBytes(convertedIdentifier));
             return BitConverter.ToString(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(password)));
