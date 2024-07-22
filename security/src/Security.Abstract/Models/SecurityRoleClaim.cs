@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Text;
 
 namespace Security.Abstract
@@ -16,9 +17,34 @@ namespace Security.Abstract
         public virtual TIdentifier RoleID { get; init; }
 
         /// <summary>
-        /// Gets the primary key of the claim 
+        /// Represent a type of the claim
         /// </summary>
-        public virtual TIdentifier ClaimID { get; init; }
+        public string Type { get; set; }
+
+        /// <summary>
+        /// Represent a value of the claim
+        /// </summary>
+        public string Value { get; set; }
+
+        /// <summary>
+        /// Initializes Type and Value properties of the class
+        /// </summary>
+        /// <param name="claim"></param>
+        public virtual void InitializeFromClaim(Claim claim)
+        {
+            this.Type = claim.Type;
+            this.Value = claim.Value;
+        }
+
+        /// <summary>
+        /// Compares two claims by identifier
+        /// </summary>
+        /// <param name="other">The object will be compared</param>
+        /// <returns>True if the object represents a claim with a special identifier, otherwise False</returns>
+        public bool Equals(SecurityClaim<TIdentifier> other)
+        {
+            return this.ID.Equals(other.ID);
+        }
 
         /// <summary>
         /// Compares two role-claim by identifier
@@ -60,10 +86,16 @@ namespace Security.Abstract
             var builder = new StringBuilder();
 
             builder
-                .Append("{ClaimID:\t")
-                .Append(this.ClaimID)
+                .Append("{ID:\t")
+                .Append(this.ID)
                 .Append(",\t")
-                .Append("{RoleID:\t")
+                .Append("Type:\t")
+                .Append(this.Type)
+                .Append(",\t")
+                .Append("Value:\t")
+                .Append(this.Value)
+                .Append(",\t")
+                .Append("RoleID:\t")
                 .Append(this.RoleID)
                 .Append("}");
 
