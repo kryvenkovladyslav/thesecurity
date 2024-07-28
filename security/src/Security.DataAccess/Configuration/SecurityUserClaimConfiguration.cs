@@ -12,7 +12,7 @@ namespace Security.DataAccess
     {
         public void Configure(EntityTypeBuilder<TSecurityUserClaim> builder)
         {
-            var securityUserClaimTable = builder.ToTable(SecurityUserClaimConfigurationDefaults.UserClaimTableName);
+            var securityUserClaimTable = builder.ToTable(SecurityUserClaimConfigurationDefaults.TableName);
 
             securityUserClaimTable.HasKey(claim => claim.ID);
 

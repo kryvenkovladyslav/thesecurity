@@ -2,7 +2,7 @@
 {
     internal static class SecurityUserClaimConfigurationDefaults
     {
-        public static string UserClaimTableName { get; } = "SecurityUserClaim";
+        public static string TableName { get; } = "SecurityUserClaim";
 
         public static string IdentifierColumnName { get; } = "ID";
 
