@@ -2,7 +2,7 @@
 {
     internal static class SecurityUserConfigurationDefaults
     {
-        public static string SecurityUserTableName { get; } = "SecurityUser";
+        public static string TableName { get; } = "SecurityUser";
 
         public static string IdentifierColumnName { get; } = "ID";
 
