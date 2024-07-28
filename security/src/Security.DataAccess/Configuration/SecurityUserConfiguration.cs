@@ -5,10 +5,19 @@ using System;
 
 namespace Security.DataAccess
 {
+    /// <summary>
+    /// Provides methods for configuring the <see cref="SecurityUser{TIdentifier}"/> entity
+    /// </summary>
+    /// <typeparam name="TSecurityUser">Represents the <see cref="SecurityUser{TIdentifier}"/></typeparam>
+    /// <typeparam name="TIdentifier">Represents an identifier of the <see cref="SecurityUser{TIdentifier}"/></typeparam>
     internal sealed class SecurityUserConfiguration<TSecurityUser, TIdentifier> : IEntityTypeConfiguration<TSecurityUser>
         where TIdentifier : IEquatable<TIdentifier>
         where TSecurityUser : SecurityUser<TIdentifier>
     {
+        /// <summary>
+        /// Configures the <see cref="SecurityUser{TIdentifier}"/> table inside the database
+        /// </summary>
+        /// <param name="builder">The standard builder for applying table configuration</param>
         public void Configure(EntityTypeBuilder<TSecurityUser> builder)
         {
             var securityUserTable = builder.ToTable(SecurityUserConfigurationDefaults.TableName);

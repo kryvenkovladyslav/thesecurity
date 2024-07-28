@@ -5,12 +5,23 @@ using System;
 
 namespace Security.DataAccess.Configuration
 {
+    /// <summary>
+    /// Provides methods for configuring the <see cref="SecurityUserRole{TIdentifier}"/> entity
+    /// </summary>
+    /// <typeparam name="TSecurityUser">Represents the <see cref="SecurityUser{TIdentifier}"/></typeparam>
+    /// <typeparam name="TSecurityRole">Represents the <see cref="SecurityRole{TIdentifier}"/></typeparam>
+    /// <typeparam name="TSecurityUserRole">Represents the <see cref="SecurityUserRole{TIdentifier}"/></typeparam>
+    /// <typeparam name="TIdentifier">Represents an identifier of the <see cref="SecurityUserRole{TIdentifier}"/></typeparam>
     internal sealed class SecurityUserRoleConfiguration<TSecurityUser, TSecurityRole, TSecurityUserRole, TIdentifier> : IEntityTypeConfiguration<TSecurityUserRole>
         where TIdentifier : IEquatable<TIdentifier>
         where TSecurityUser : SecurityUser<TIdentifier>
         where TSecurityRole : SecurityRole<TIdentifier>
         where TSecurityUserRole : SecurityUserRole<TIdentifier>
     {
+        /// <summary>
+        /// Configures the <see cref="SecurityUserRole{TIdentifier}"/> table inside the database
+        /// </summary>
+        /// <param name="builder">The standard builder for applying table configuration</param>
         public void Configure(EntityTypeBuilder<TSecurityUserRole> builder)
         {
             var securityUserRoleTable = builder.ToTable(SecurityUserRoleConfigurationDefaults.TableName);

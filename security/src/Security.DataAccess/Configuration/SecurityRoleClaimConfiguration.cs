@@ -5,11 +5,21 @@ using System;
 
 namespace Security.DataAccess
 {
+    /// <summary>
+    /// Provides methods for configuring the <see cref="SecurityRoleClaim{TIdentifier}"/> entity
+    /// </summary>
+    /// <typeparam name="TSecurityRole">Represents the <see cref="SecurityRole{TIdentifier}"/></typeparam>
+    /// <typeparam name="TSecurityRoleClaim">Represents the <see cref="SecurityRoleClaim{TSecurityRoleClaim}"/></typeparam>
+    /// <typeparam name="TIdentifier">Represents an identifier of the <see cref="SecurityRole{TIdentifier}"/></typeparam>
     internal sealed class SecurityRoleClaimConfiguration<TSecurityRole, TSecurityRoleClaim, TIdentifier> : IEntityTypeConfiguration<TSecurityRoleClaim>
         where TIdentifier : IEquatable<TIdentifier>
         where TSecurityRole : SecurityRole<TIdentifier>
         where TSecurityRoleClaim : SecurityRoleClaim<TIdentifier>
     {
+        /// <summary>
+        /// Configures the <see cref="SecurityRoleClaim{TIdentifier}"/> table inside the database
+        /// </summary>
+        /// <param name="builder">The standard builder for applying table configuration</param>
         public void Configure(EntityTypeBuilder<TSecurityRoleClaim> builder)
         {
             var roleClaimTable = builder.ToTable(SecurityRoleClaimConfigurationDefaults.TableName);
