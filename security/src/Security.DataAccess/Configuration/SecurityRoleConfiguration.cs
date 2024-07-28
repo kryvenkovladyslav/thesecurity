@@ -5,32 +5,32 @@ using System;
 
 namespace Security.DataAccess
 {
-    internal sealed class SecurityRoleConfiguration<TSecurityRole,TIdentifier> : IEntityTypeConfiguration<TSecurityRole>
+    internal sealed class SecurityRoleConfiguration<TSecurityRole, TIdentifier> : IEntityTypeConfiguration<TSecurityRole>
         where TIdentifier : IEquatable<TIdentifier>
         where TSecurityRole : SecurityRole<TIdentifier>
     {
         public void Configure(EntityTypeBuilder<TSecurityRole> builder)
         {
-            var roleTable = builder.ToTable(SecurityRoleConfigurationDefaults.TableName);
+            var securityRoleTable = builder.ToTable(SecurityRoleConfigurationDefaults.TableName);
 
-            roleTable.HasKey(role => role.ID);
+            securityRoleTable.HasKey(role => role.ID);
 
-            roleTable
+            securityRoleTable
                 .Property(role => role.ID)
                 .HasColumnName(SecurityRoleConfigurationDefaults.IdentifierColumnName)
                 .IsRequired();
 
-            roleTable
+            securityRoleTable
                 .Property(role => role.Name)
                 .HasColumnName(SecurityRoleConfigurationDefaults.NameColumnName)
                 .IsRequired();
 
-            roleTable
+            securityRoleTable
                 .Property(role => role.NormalizedName)
                 .HasColumnName(SecurityRoleConfigurationDefaults.NormalizedNameColumnName)
                 .IsRequired();
 
-            roleTable
+            securityRoleTable
                 .Property(role => role.ConcurrencyStamp)
                 .HasColumnName(SecurityRoleConfigurationDefaults.ConcurrencyStampColumnName)
                 .IsRequired();
