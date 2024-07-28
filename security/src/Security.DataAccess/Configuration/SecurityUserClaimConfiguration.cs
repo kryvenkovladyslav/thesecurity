@@ -12,28 +12,28 @@ namespace Security.DataAccess
     {
         public void Configure(EntityTypeBuilder<TSecurityUserClaim> builder)
         {
-            var securityUserClaimTable = builder.ToTable(SecurityClaimConfigurationDefaults.SecurityClaimTableName);
+            var securityUserClaimTable = builder.ToTable(SecurityUserClaimConfigurationDefaults.UserClaimTableName);
 
             securityUserClaimTable.HasKey(claim => claim.ID);
 
             securityUserClaimTable
                 .Property(claim => claim.ID)
-                .HasColumnName(SecurityClaimConfigurationDefaults.IdentifierColumnName)
+                .HasColumnName(SecurityUserClaimConfigurationDefaults.IdentifierColumnName)
                 .IsRequired();
 
             securityUserClaimTable
                 .Property(claim => claim.UserID)
-                .HasColumnName(SecurityClaimConfigurationDefaults.UserIdentifierColumnName)
+                .HasColumnName(SecurityUserClaimConfigurationDefaults.UserIdentifierColumnName)
                 .IsRequired();
 
             securityUserClaimTable
                 .Property(claim => claim.Type)
-                .HasColumnName(SecurityClaimConfigurationDefaults.TypeColumnName)
+                .HasColumnName(SecurityUserClaimConfigurationDefaults.TypeColumnName)
                 .IsRequired();
 
             securityUserClaimTable
                 .Property(claim => claim.Value)
-                .HasColumnName(SecurityClaimConfigurationDefaults.ValueColumnName)
+                .HasColumnName(SecurityUserClaimConfigurationDefaults.ValueColumnName)
                 .IsRequired();
 
             securityUserClaimTable

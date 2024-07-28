@@ -1,8 +1,8 @@
 ﻿namespace Security.DataAccess
 {
-    internal static class SecurityClaimConfigurationDefaults
+    internal static class SecurityUserClaimConfigurationDefaults
     {
-        public static string SecurityClaimTableName { get; } = "SecurityClaim";
+        public static string UserClaimTableName { get; } = "SecurityUserClaim";
 
         public static string IdentifierColumnName { get; } = "ID";
 
