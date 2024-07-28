@@ -5,39 +5,39 @@ using System;
 
 namespace Security.DataAccess
 {
-    internal sealed class SecurityClaimConfiguration<TUser, TClaim, TIdentifier> : IEntityTypeConfiguration<TClaim>
-        where TUser : SecurityUser<TIdentifier>
-        where TClaim : SecurityClaim<TIdentifier>
+    internal sealed class SecurityUserClaimConfiguration<TSecurityUser, TSecurityUserClaim, TIdentifier> : IEntityTypeConfiguration<TSecurityUserClaim>
         where TIdentifier : IEquatable<TIdentifier>
+        where TSecurityUser : SecurityUser<TIdentifier>
+        where TSecurityUserClaim : SecurityClaim<TIdentifier>
     {
-        public void Configure(EntityTypeBuilder<TClaim> builder)
+        public void Configure(EntityTypeBuilder<TSecurityUserClaim> builder)
         {
-            var claimTable = builder.ToTable(SecurityClaimConfigurationDefaults.SecurityClaimTableName);
+            var securityUserClaimTable = builder.ToTable(SecurityClaimConfigurationDefaults.SecurityClaimTableName);
 
-            claimTable.HasKey(claim => claim.ID);
+            securityUserClaimTable.HasKey(claim => claim.ID);
 
-            claimTable
+            securityUserClaimTable
                 .Property(claim => claim.ID)
                 .HasColumnName(SecurityClaimConfigurationDefaults.IdentifierColumnName)
                 .IsRequired();
 
-            claimTable
+            securityUserClaimTable
                 .Property(claim => claim.UserID)
                 .HasColumnName(SecurityClaimConfigurationDefaults.UserIdentifierColumnName)
                 .IsRequired();
 
-            claimTable
+            securityUserClaimTable
                 .Property(claim => claim.Type)
                 .HasColumnName(SecurityClaimConfigurationDefaults.TypeColumnName)
                 .IsRequired();
 
-            claimTable
+            securityUserClaimTable
                 .Property(claim => claim.Value)
                 .HasColumnName(SecurityClaimConfigurationDefaults.ValueColumnName)
                 .IsRequired();
 
-            claimTable
-                .HasOne<TUser>()
+            securityUserClaimTable
+                .HasOne<TSecurityUser>()
                 .WithMany()
                 .HasForeignKey(claim => claim.UserID)
                 .HasPrincipalKey(user => user.ID);
