@@ -11,17 +11,11 @@ namespace Security.DependencyInjection
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddSecuritySystem<TUser, TIdentifier>(this IServiceCollection services)
+        public static IServiceCollection AddSecuritySystem<TUser, TRole, TIdentifier>(this IServiceCollection services)
             where TUser : SecurityUser<TIdentifier>
+            where TRole : SecurityRole<TIdentifier>
             where TIdentifier : IEquatable<TIdentifier> 
         {
-            services.AddScoped<IUserClaimsPrincipalFactory<TUser>, SecurityUserClaimsPrincipalFactory<TUser, TIdentifier>>();
-            services.AddScoped<IPasswordHasher<TUser>, SecurityPasswordHasher<TUser, TIdentifier>>();
-
-            services
-                .AddConfirmationService<IEmailConfirmationService, IEmailConfirmationMessage, SecurityEmailConfirmationService>()
-                .AddConfirmationService<IPhoneNumberConfirmationService, IPhoneNumberConfirmationMessage, SecurityPhoneNumberConfirmationService>();
-
             services.AddIdentityCore<TUser>(options =>
             {
                 options.Tokens.ChangePhoneNumberTokenProvider = SecurityTokenOptions.DefaultSecurityPhoneNumberTokenProvider;
@@ -36,10 +30,17 @@ namespace Security.DependencyInjection
                 options.Password.RequireDigit = false;
                 options.Password.RequiredUniqueChars = 0;
             })
+                .AddRoles<TRole>()
                 .AddTokenProvider<SecurityEmailConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityEmailTokenProvider)
                 .AddTokenProvider<SecurityPhoneNumberConfirmationTokenProvider<TUser, TIdentifier>>(SecurityTokenOptions.DefaultSecurityPhoneNumberTokenProvider)
                 .AddSignInManager<SignInManager<TUser>>();
 
+            services.AddScoped<IUserClaimsPrincipalFactory<TUser>, SecurityUserRoleClaimsPrincipalFactory<TUser, TRole, TIdentifier>>();
+            services.AddScoped<IPasswordHasher<TUser>, SecurityPasswordHasher<TUser, TIdentifier>>();
+
+            services
+                .AddConfirmationService<IEmailConfirmationService, IEmailConfirmationMessage, SecurityEmailConfirmationService>()
+                .AddConfirmationService<IPhoneNumberConfirmationService, IPhoneNumberConfirmationMessage, SecurityPhoneNumberConfirmationService>();
             services.AddScoped<IPasswordValidator<TUser>, SecurityUserPasswordValidator<TUser, TIdentifier>>();
 
             return services;
@@ -76,6 +77,7 @@ namespace Security.DependencyInjection
             where TContext : SecurityDatabaseContext<TUser, TRole, TClaim, TUserRole, TRoleClaim, TIdentifier>
         {
             services.TryAddScoped<IUserStore<TUser>, SecurityUserStore<TContext, TUser, TClaim, TIdentifier>>();
+            services.TryAddScoped<IRoleStore<TRole>, SecurityRoleStore<TContext, TRole, TRoleClaim, TIdentifier>>();
 
             return services;
         }
