@@ -76,6 +76,24 @@ namespace Security.DataAccess
                 .Property(user => user.PasswordHash)
                 .HasColumnName(SecurityUserConfigurationDefaults.PasswordHashColumnName)
                 .IsRequired();
+
+            securityUserTable
+                .Property(user => user.LockoutEnabled)
+                .HasColumnName(SecurityUserConfigurationDefaults.LockoutEnabledColumnName)
+                .HasDefaultValue(false)
+                .IsRequired();
+
+            securityUserTable
+                .Property(user => user.AccessFailedCount)
+                .HasColumnName(SecurityUserConfigurationDefaults.AccessFailedCountColumnName)
+                .HasDefaultValue(default(int))
+                .IsRequired();
+
+            securityUserTable
+                .Property(user => user.LockoutEnd)
+                .HasColumnName(SecurityUserConfigurationDefaults.LockoutEndColumnName)
+                .HasDefaultValue(null)
+                .IsRequired(false);
         }
     }
 }

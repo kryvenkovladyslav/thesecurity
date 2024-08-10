@@ -61,5 +61,20 @@ namespace Security.DataAccess
         /// Provides the name of the column representing the hashed password
         /// </summary>
         public static string PasswordHashColumnName { get; set; } = "PasswordHash";
+
+        /// <summary>
+        /// Provides the name of the column representing the value indication if the lockout is enabled
+        /// </summary>
+        public static string LockoutEnabledColumnName { get; set; } = "LockoutEnabled";
+
+        /// <summary>
+        /// Provides the name of the column representing the end of the lockout
+        /// </summary>
+        public static string LockoutEndColumnName { get; set; } = "LockoutEnd";
+
+        /// <summary>
+        /// Provides the name of the column representing the count of failed attempts
+        /// </summary>
+        public static string AccessFailedCountColumnName { get; set; } = "AccessFailedCount";
     }
 }
