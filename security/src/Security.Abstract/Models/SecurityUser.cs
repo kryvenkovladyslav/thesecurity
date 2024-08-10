@@ -56,6 +56,21 @@ namespace Security.Abstract
         public string PasswordHash { get; set; }
 
         /// <summary>
+        /// Represents the time lockout finishes
+        /// </summary>
+        public DateTime? LockoutEnd { get; set; }
+
+        /// <summary>
+        /// Shows if the lockout is enabled
+        /// </summary>
+        public bool LockoutEnabled { get; set; }
+
+        /// <summary>
+        /// Represents a count of failed attempts to get access to the account
+        /// </summary>
+        public int AccessFailedCount { get; set; }
+
+        /// <summary>
         /// Compares two users by identifier
         /// </summary>
         /// <param name="obj">The object will be compared</param>
