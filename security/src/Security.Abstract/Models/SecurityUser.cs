@@ -58,7 +58,7 @@ namespace Security.Abstract
         /// <summary>
         /// Represents the time lockout finishes
         /// </summary>
-        public DateTime? LockoutEnd { get; set; }
+        public DateTimeOffset? LockoutEnd { get; set; }
 
         /// <summary>
         /// Shows if the lockout is enabled

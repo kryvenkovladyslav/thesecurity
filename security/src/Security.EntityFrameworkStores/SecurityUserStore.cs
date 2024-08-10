@@ -10,10 +10,11 @@ using System.Threading.Tasks;
 
 namespace Security.EntityFrameworkStores
 {
-    public class SecurityUserStore<TContext, TUser, TClaim, TIdentifier> : SecurityBaseStore<TContext, TIdentifier, TUser, TClaim>, 
+    public class SecurityUserStore<TContext, TUser, TClaim, TIdentifier> : SecurityBaseStore<TContext, TIdentifier, TUser, TClaim>,
         IUserStore<TUser>,
         IUserClaimStore<TUser>,
         IUserEmailStore<TUser>,
+        IUserLockoutStore<TUser>,
         IUserPasswordStore<TUser>,
         IQueryableUserStore<TUser>,
         IUserPhoneNumberStore<TUser>,
@@ -29,7 +30,7 @@ namespace Security.EntityFrameworkStores
 
         public IQueryable<TClaim> Claims => this.GetSet<TClaim>().AsNoTracking();
 
-        public SecurityUserStore(TContext context, IdentityErrorDescriber errorDescriber) : base(context) 
+        public SecurityUserStore(TContext context, IdentityErrorDescriber errorDescriber) : base(context)
         {
             this.ErrorDescriber = errorDescriber ?? throw new ArgumentNullException(nameof(errorDescriber));
         }
@@ -164,7 +165,7 @@ namespace Security.EntityFrameworkStores
             }
             catch (Exception)
             {
-                
+
                 return IdentityResult.Failed(this.ErrorDescriber.StorageFailure());
             }
         }
@@ -406,7 +407,7 @@ namespace Security.EntityFrameworkStores
             return Task.CompletedTask;
         }
 
-       
+
         public virtual Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken = default)
         {
             this.ThrowIfDisposed();
@@ -416,7 +417,7 @@ namespace Security.EntityFrameworkStores
             return Task.FromResult(user.PasswordHash);
         }
 
-       
+
         public virtual Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken = default)
         {
             this.ThrowIfDisposed();
@@ -424,6 +425,76 @@ namespace Security.EntityFrameworkStores
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
             return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
+        }
+
+        #endregion
+
+        #region IUserLockoutStore Implementation
+
+        public virtual Task<DateTimeOffset?> GetLockoutEndDateAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            return Task.FromResult(user.LockoutEnd);
+        }
+
+        public virtual Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            user.LockoutEnd = lockoutEnd;
+            return Task.CompletedTask;
+        }
+
+        public virtual Task<int> IncrementAccessFailedCountAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            return Task.FromResult(++user.AccessFailedCount);
+        }
+
+        public virtual Task ResetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            user.AccessFailedCount = default;
+            return Task.CompletedTask;
+        }
+
+        public virtual Task<int> GetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            return Task.FromResult(user.AccessFailedCount);
+        }
+
+        public virtual Task<bool> GetLockoutEnabledAsync(TUser user, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            return Task.FromResult(user.LockoutEnabled);
+        }
+
+        public virtual Task SetLockoutEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            user.LockoutEnabled = enabled;
+            return Task.CompletedTask;
         }
 
         #endregion
